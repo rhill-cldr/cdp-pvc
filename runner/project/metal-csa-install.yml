@@ -1,0 +1,19 @@
+---
+- name: Setup Cloudera Streaming Analytics
+  hosts: base_namenode 
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - wget
+
+  tasks:
+    - name: Flink admin home dir
+      shell: "kinit -kt $(find /var/run/cloudera-scm-agent/process -name 'hdfs.keytab' | head -n1) hdfs/$(hostname -f) && hdfs dfs -mkdir /user/admin && hdfs dfs -chown admin:admin /user/admin"
+
+    - name: Flink user home dir
+      shell: "kinit -kt $(find /var/run/cloudera-scm-agent/process -name 'hdfs.keytab' | head -n1) hdfs/$(hostname -f) && hdfs dfs -mkdir /user/flink && hdfs dfs -chown flink:flink /user/flink"
+
+    - name: Rename JDBC connector
+      shell: "cp /usr/share/java/postgresql-jdbc.jar /usr/share/java/postgresql-connector-java.jar"

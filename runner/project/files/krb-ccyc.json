@@ -1,0 +1,31 @@
+{
+  "items" : [ {
+    "name" : "KDC_ADMIN_HOST",
+    "value" : "ccycloud-1.rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "KDC_HOST",
+    "value" : "ccycloud-1.rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "KDC_TYPE",
+    "value" : "Red Hat IPA",
+    "sensitive" : false
+  }, {
+    "name" : "KRB_DOMAIN",
+    "value" : "rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "KRB_ENC_TYPES",
+    "value" : "aes256-cts-hmac-sha1-96",
+    "sensitive" : false
+  }, {
+    "name" : "KRB_MANAGE_KRB5_CONF",
+    "value" : "true",
+    "sensitive" : false
+  }, {
+    "name" : "SECURITY_REALM",
+    "value" : "RHILL-DEV.ROOT.HWX.SITE",
+    "sensitive" : false
+  } ]
+}

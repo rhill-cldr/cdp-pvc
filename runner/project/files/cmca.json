@@ -1,0 +1,30 @@
+{
+"location" : "/opt/cloudera/auto-tls",
+"customCA" : false,
+"interpretAsFilenames" : true,
+"cmHostCert" : "",
+"cmHostKey" : "",
+"caCert" : "",
+"keystorePasswd" : "",
+"truststorePasswd" : "",
+"trustedCaCerts" : "",
+"hostCerts" : [ {
+"hostname" : "admin-02.dev.metal.zndx.org",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "base-01.dev.metal.zndx.org",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "base-02.dev.metal.zndx.org",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}],
+"configureAllServices" : "true",
+"sshPort" : 22,
+"userName" : "root",
+"password" : "",
+"privateKey":"/root/.cdp/root_key",
+"passphrase": "Super@Secret1"
+}

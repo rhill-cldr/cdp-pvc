@@ -1,0 +1,45 @@
+---
+- name: ECS Cluster Configuration
+  hosts: ecs_cluster
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - bash
+        - chrony
+        - git
+        - nfs-utils
+        - nmap
+        - iptables
+        - sshpass
+        - python3.11
+        - python3.11-pip
+        - postgresql
+        - postgresql-jdbc
+        - python3.11-psycopg2
+        - java-11-openjdk-devel
+
+  tasks:
+    - name: Check tmp directory on cluster hosts
+      ansible.builtin.file:
+        path: "/tmp"
+        mode: "1777"
+        state: directory
+
+    - name: "Start and enable services"
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - chronyd
+
+    - name: "Configure resolv.conf"
+      aansible.builtin.blockinfile:
+        create: true
+        backup: true
+        path: /etc/resolv.conf
+        insertbefore: "BOF"
+        block:  |
+          search {{  }}
+          nameserver 1.1.1.1
+          nameserver 1.0.0.1
+      when: not airflow_sql_alchemy_conn.stdout is regex("^postgresql.*")

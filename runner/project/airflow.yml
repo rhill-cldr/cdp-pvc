@@ -1,0 +1,119 @@
+---
+- name: Setup management environment
+  hosts: metal_devops
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - gcc-c++
+        - python39-devel
+
+  tasks:
+    - name: Copy constraints file to server
+      ansible.builtin.copy:
+        src={{ airflow_constraints_file }}
+        dest={{ airflow_constraints_file }}
+        mode='0600'
+
+    - name: Ensure group 'airflow' exists
+      ansible.builtin.group:
+        name: airflow
+        state: present
+
+    - name: Add the user 'airflow' with a bash shell
+      ansible.builtin.user:
+        name: airflow
+        group: airflow
+        shell: /bin/bash
+
+    - name: Create a 2048-bit SSH key for user airlfow in ~airflow/.ssh/id_rsa
+      ansible.builtin.user:
+        name: airflow
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+
+    - name: "Install Apache Airflow"
+      ansible.builtin.pip:
+        executable: pip3.9
+        name: apache-airflow[{{ airflow_providers }}]=={{ cdp_airflow_version }} 
+        extra_args: "--constraint /root/{{ airflow_constraints_file }} --no-binary :krb5:"
+        state: present
+      tags: [chk]
+
+    - name: "Airflow env vars"
+      ansible.builtin.copy:
+        src: airflow/airflow
+        dest: /etc/sysconfig/airflow
+      tags: [chk]
+
+    - name: "Airflow owner and permissions template"
+      ansible.builtin.copy:
+        src: airflow/airflow.conf
+        dest: /usr/lib/tmpfiles.d/airflow.conf
+      tags: [chk]
+
+    - name: "Airflow service units"
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "/usr/lib/systemd/system/{{ item.dest }}"
+      loop:
+        - src: airflow/airflow-flower.service
+          dest: airflow-flower.service
+        - src: airflow/airflow-kerberos.service
+          dest: airflow-kerberos.service
+        - src: airflow/airflow-scheduler.service
+          dest: airflow-scheduler.service
+        - src: airflow/airflow-webserver.service
+          dest: airflow-webserver.service
+        - src: airflow/airflow-worker.service
+          dest: airflow-worker.service
+      tags: [chk]
+
+    - name: Force systemd to reread configs
+      ansible.builtin.systemd:
+        daemon_reload: true
+      tags: [chk]
+
+    - name: "Locate Airflow configuration file"
+      ansible.builtin.stat:
+        path: /home/airflow/airflow.cfg
+      register: airflow_cfg
+
+    - name: "Initialize Airflow defaults"
+      shell: "AIRFLOW_HOME=/home/airflow /usr/local/bin/airflow db init"
+      become: yes
+      become_user: airflow
+
+    - name: "Confirm Airflow DB configuration"
+      shell: "AIRFLOW_HOME=/home/airflow /usr/local/bin/airflow config get-value database sql_alchemy_conn"
+      register: airflow_sql_alchemy_conn
+
+    - name: "Configure Airflow DB"
+      ansible.builtin.lineinfile:
+        path: /home/airflow/airflow.cfg
+        regex: "^sql_alchemy_conn = sqlite.////home/airflow/airflow.db"
+        line: "sql_alchemy_conn = postgresql+psycopg2://airflow:password@localhost/airflow"
+      when: not airflow_sql_alchemy_conn.stdout is regex("^postgresql.*")
+
+    - name: "Configure Celery results DB"
+      ansible.builtin.lineinfile:
+        path: /home/airflow/airflow.cfg
+        regex: "^result_backend = db+postgresql://postgres:airflow@postgres/airflow"
+        line: "result_backend = db+postgresql://airflow:password@127.0.0.1/airflow"
+
+    - name: "Initialize Airflow DB"
+      shell: "AIRFLOW_HOME=/home/airflow /usr/local/bin/airflow db init"
+      become: yes
+      become_user: airflow
+      when: airflow_sql_alchemy_conn.stdout is regex("^postgres.*")
+
+    - name: Start and enable Airflow  services
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - airflow-scheduler
+        - airflow-worker
+        - airflow-flower
+        - airflow-webserver
+

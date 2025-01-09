@@ -1,0 +1,48 @@
+---
+- name: Configure AutoTLS
+  hosts: base_cm
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - jq
+  
+  tasks:
+    - name: Copy auto-tls configuration files to server
+      ansible.builtin.copy: "src={{ item }} dest={{ item }}"
+      with_items:
+        - cmca.json
+    
+    - name: Check pki working directory
+      ansible.builtin.file:
+        path: /root/pki
+        state: directory
+        mode: '0755'
+
+    - name: Check auto-tls tmp directory
+      ansible.builtin.file:
+        path: /tmp/auto-tls
+        state: directory
+        mode: '0755'
+
+    - name: Configure AutoTLS
+      ansible.builtin.script:
+        chdir: /root/pki
+        cmd: cmca.sh
+        creates: /opt/cloudera/auto-tls/hosts-key-store/{{ inventory_hostname }}/cm-auto-host_keystore.jks
+
+    - name: Truncate CM log for AutoTLS restart [FIXME]
+      ansible.builtin.file:
+        path: "/var/log/cloudera-scm-server/cloudera-scm-server.log"
+        state: "absent"
+
+    - name: Restart Cloudera Manager
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Wait for Jetty to start before proceeding
+      wait_for:
+        path: /var/log/cloudera-scm-server/cloudera-scm-server.log
+        search_regex: Started Jetty server.
+
+

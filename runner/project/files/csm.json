@@ -1,0 +1,390 @@
+{
+  "name": "mgmt",
+  "displayName": "Cloudera Management Service",
+  "type": "MGMT",
+  "config": {
+    "items": [
+      {
+        "name": "mgmt_emit_sensitive_data_in_stderr",
+        "value": "true"
+      },
+      {
+        "name": "ssl_client_truststore_location",
+        "value": "/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks"
+      },
+      {
+        "name": "ssl_client_truststore_password",
+        "value": "Super@Secret1"
+      }
+    ]
+  },
+  "roles": [
+    {
+      "name": "mgmt-ALERTPUBLISHER",
+      "type": "ALERTPUBLISHER",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-ALERTPUBLISHER-BASE"
+      },
+      "hostRef": {
+        "hostId": "f55b9dba-94e0-4140-bd48-7a72a30e05bd",
+        "hostname": "ccycloud-3.rhill-dev.root.hwx.site"
+      }
+    },
+    {
+      "name": "mgmt-EVENTSERVER",
+      "type": "EVENTSERVER",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-EVENTSERVER-BASE"
+      },
+      "hostRef": {
+        "hostId": "f55b9dba-94e0-4140-bd48-7a72a30e05bd",
+        "hostname": "ccycloud-3.rhill-dev.root.hwx.site"
+      }
+    },
+    {
+      "name": "mgmt-REPORTSMANAGER",
+      "type": "REPORTSMANAGER",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-REPORTSMANAGER-BASE"
+      },
+      "hostRef": {
+        "hostId": "f55b9dba-94e0-4140-bd48-7a72a30e05bd",
+        "hostname": "ccycloud-3.rhill-dev.root.hwx.site"
+      }
+    },
+    {
+      "name": "mgmt-HOSTMONITOR",
+      "type": "HOSTMONITOR",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-HOSTMONITOR-BASE"
+      },
+      "hostRef": {
+        "hostId": "f55b9dba-94e0-4140-bd48-7a72a30e05bd",
+        "hostname": "ccycloud-3.rhill-dev.root.hwx.site"
+      }
+    },
+    {
+      "name": "mgmt-SERVICEMONITOR",
+      "type": "SERVICEMONITOR",
+      "roleConfigGroupRef": {
+        "roleConfigGroupName": "mgmt-SERVICEMONITOR-BASE"
+      },
+      "hostRef": {
+        "hostId": "f55b9dba-94e0-4140-bd48-7a72a30e05bd",
+        "hostname": "ccycloud-3.rhill-dev.root.hwx.site"
+      }
+    }
+  ],
+  "roleConfigGroups": [
+    {
+      "name": "mgmt-ALERTPUBLISHER-BASE",
+      "roleType": "ALERTPUBLISHER",
+      "displayName": "Alert Publisher Default Group",
+      "base": true,
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "config": {
+        "items": [
+          {
+            "name": "alert_heapsize",
+            "value": "2147483648"
+          },
+          {
+            "name": "alert_mailserver_from_address",
+            "value": "ps-dev@cloudera.com"
+          },
+          {
+            "name": "alert_mailserver_hostname",
+            "value": "ccycloud-1.rhill-dev.root.hwx.site"
+          },
+          {
+            "name": "alert_mailserver_password",
+            "value": "Super@Secret1"
+          },
+          {
+            "name": "alert_mailserver_recipients",
+            "value": "rhill@cloudera.com"
+          },
+          {
+            "name": "alert_mailserver_username",
+            "value": "rhill-dev"
+          },
+          {
+            "name": "enable_alerts",
+            "value": "false"
+          },
+          {
+            "name": "log_directory_free_space_absolute_thresholds",
+            "value": "{\"warning\":13958643712,\"critical\":9663676416}"
+          },
+          {
+            "name": "mgmt_log_dir",
+            "value": "/var/log/cloudera-scm-alertpublisher"
+          },
+          {
+            "name": "stacks_collection_directory",
+            "value": "/var/log/cloudera-scm-alertpublisher/jstacks"
+          },
+          {
+            "name": "oom_heap_dump_enabled",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mgmt-EVENTSERVER-BASE",
+      "roleType": "EVENTSERVER",
+      "displayName": "Event Server Default Group",
+      "base": true,
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "config": {
+        "items": [
+          {
+            "name": "event_server_heapsize",
+            "value": "4294967296"
+          },
+          {
+            "name": "eventserver_alert_on_transition_out_of_alerting_health_enabled",
+            "value": "true"
+          },
+          {
+            "name": "eventserver_index_dir",
+            "value": "/data/cloudera/data01/cloudera_logs/cloudera-scm-eventserver"
+          },
+          {
+            "name": "log_directory_free_space_absolute_thresholds",
+            "value": "{\"warning\":13958643712,\"critical\":9663676416}"
+          },
+          {
+            "name": "mgmt_descriptor_fetch_frequency",
+            "value": "5"
+          },
+          {
+            "name": "mgmt_num_descriptor_fetch_tries",
+            "value": "60"
+          },
+          {
+            "name": "mgmt_log_dir",
+            "value": "/var/log/cloudera-scm-eventserver"
+          },
+          {
+            "name": "stacks_collection_directory",
+            "value": "/var/log/cloudera-scm-eventserver/jstacks"
+          },
+          {
+            "name": "oom_heap_dump_enabled",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mgmt-REPORTSMANAGER-BASE",
+      "roleType": "REPORTSMANAGER",
+      "displayName": "Reports Manager Default Group",
+      "base": true,
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "config": {
+        "items": [
+          {
+            "name": "headlamp_heapsize",
+            "value": "4294967296"
+          },
+          {
+            "name": "headlamp_database_host",
+            "value": "ccycloud-2.rhill-dev.root.hwx.site:5432"
+          },
+          {
+            "name": "headlamp_database_type",
+            "value": "postgresql"
+          },
+          {
+            "name": "headlamp_database_name",
+            "value": "rman"
+          },
+          {
+            "name": "headlamp_database_user",
+            "value": "rman"
+          },
+          {
+            "name": "headlamp_database_password",
+            "value": "password"
+          },
+          {
+            "name": "headlamp_scratch_dir",
+            "value": "/data/cloudera/data01/cloudera_logs/cloudera-scm-headlamp"
+          },
+          {
+            "name": "log_directory_free_space_absolute_thresholds",
+            "value": "{\"warning\":13958643712,\"critical\":9663676416}"
+          },
+          {
+            "name": "mgmt_descriptor_fetch_frequency",
+            "value": "5"
+          },
+          {
+            "name": "mgmt_num_descriptor_fetch_tries",
+            "value": "60"
+          },
+          {
+            "name": "mgmt_log_dir",
+            "value": "/var/log/cloudera-scm-headlamp"
+          },
+          {
+            "name": "oom_heap_dump_enabled",
+            "value": "false"
+          },
+          {
+            "name": "stacks_collection_directory",
+            "value": "/var/log/cloudera-scm-headlamp/jstacks"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mgmt-HOSTMONITOR-BASE",
+      "roleType": "HOSTMONITOR",
+      "displayName": "Host Monitor Default Group",
+      "base": true,
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "config": {
+        "items": [
+          {
+            "name": "firehose_heapsize",
+            "value": "4294967296"
+          },
+          {
+            "name": "firehose_non_java_memory_bytes",
+            "value": "12884901888"
+          },
+          {
+            "name": "firehose_safety_valve",
+            "value": "<property><name>firehose.security.enabled</name><value>true</value></property><property><nam e>debug.servlet.https.tlsVersions</name><value>TLSv1.2</value></property>"
+          },
+          {
+            "name": "firehose_storage_dir",
+            "value": "/data/cloudera/data01/cloudera_logs/cloudera-host-monitor"
+          },
+          {
+            "name": "log_directory_free_space_absolute_thresholds",
+            "value": "{\"warning\":13958643712,\"critical\":9663676416}"
+          },
+          {
+            "name": "max_log_backup_index",
+            "value": "5"
+          },
+          {
+            "name": "max_log_size",
+            "value": "100"
+          },
+          {
+            "name": "mgmt_descriptor_fetch_frequency",
+            "value": "5"
+          },
+          {
+            "name": "mgmt_num_descriptor_fetch_tries",
+            "value": "60"
+          },
+          {
+            "name": "ssl_enabled",
+            "value": true
+          },
+          {
+            "name": "ssl_server_keystore_location",
+            "value": "/var/lib/cloudera-scm-agent/agent-cert/cm-auto-host_keystore.jks"
+          },
+          {
+            "name": "ssl_server_keystore_password",
+            "value": "Super@Secret1"
+          },
+          {
+            "name": "mgmt_log_dir",
+            "value": "/var/log/cloudera-scm-firehose"
+          },
+          {
+            "name": "stacks_collection_directory",
+            "value": "/var/log/cloudera-scm-firehose/jstacks"
+          },
+          {
+            "name": "oom_heap_dump_enabled",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mgmt-SERVICEMONITOR-BASE",
+      "roleType": "SERVICEMONITOR",
+      "displayName": "Service Monitor Default Group",
+      "base": true,
+      "serviceRef": {
+        "serviceName": "mgmt"
+      },
+      "config": {
+        "items": [
+          {
+            "name": "firehose_heapsize",
+            "value": "4294967296"
+          },
+          {
+            "name": "firehose_non_java_memory_bytes",
+            "value": "12884901888"
+          },
+          {
+            "name": "firehose_storage_dir",
+            "value": "/data/cloudera/data01/cloudera_logs/cloudera-service-monitor"
+          },
+          {
+            "name": "log_directory_free_space_absolute_thresholds",
+            "value": "{\"warning\":13958643712,\"critical\":9663676416}"
+          },
+          {
+            "name": "mgmt_descriptor_fetch_frequency",
+            "value": "5"
+          },
+          {
+            "name": "mgmt_num_descriptor_fetch_tries",
+            "value": "60"
+          },
+          {
+            "name": "firehose_safety_valve",
+            "value": "<property><name>firehose.security.enabled</name><value>true</value></property><property><nam e>debug.servlet.https.tlsVersions</name><value>TLSv1.2</value></property><property><name>tgt.lo gin.validity.period</name><value>60</value></property>"
+          },
+          {
+            "name": "ssl_enabled",
+            "value": true
+          },
+          {
+            "name": "ssl_server_keystore_location",
+            "value": "/opt/cloudera/security/pki/host.jks"
+          },
+          {
+            "name": "ssl_server_keystore_password",
+            "value": "value"
+          },
+          {
+            "name": "mgmt_log_dir",
+            "value": "/var/log/cloudera-scm-firehose"
+          },
+          {
+            "name": "stacks_collection_directory",
+            "value": "/var/log/cloudera-scm-firehose/jstacks"
+          },
+          {
+            "name": "oom_heap_dump_enabled",
+            "value": "false"
+          }
+        ]
+      }
+    }
+  ]
+}
+

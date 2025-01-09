@@ -1,0 +1,142 @@
+---
+- name: Setup Cloudera Manager
+  hosts: base_cm
+  remote_user: root
+  pre_tasks:
+    - name: Enable Cloudera Manager repo
+      ansible.builtin.yum_repository:
+        name: cloudera-manager
+        description: Cloudera Manager repo
+        state: present
+        enabled: yes
+        baseurl: https://{{ cloudera_username }}:{{ cloudera_password }}@archive.cloudera.com/p/cm7/7.11.3/redhat9/yum
+        gpgcheck: true
+        gpgkey: https://{{ cloudera_username }}:{{ cloudera_password }}@archive.cloudera.com/p/cm7/7.11.3/redhat9/yum/RPM-GPG-KEY-cloudera
+
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - python3.11
+        - python3.11-pip
+        - postgresql-server
+        - python3.11-psycopg2
+        - java-11-openjdk-devel
+        - postgresql-jdbc
+        - cloudera-manager-daemons
+        - cloudera-manager-agent
+        - cloudera-manager-server
+
+  tasks:
+    - name: Verify PostgreSQL initialization
+      ansible.builtin.stat:
+        path: "/var/lib/pgsql/data/pg_hba.conf"
+      register: postgres_data
+      tags: chk, nothing
+
+    - name: Initialize PostgreSQL
+      shell: "initdb --locale $LANG -E UTF8 -D /var/lib/pgsql/data"
+      become: yes
+      become_user: postgres
+      when: not postgres_data.stat.exists
+    
+    - name: Allow connection to the Ranger database from any host
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        line: "host    all          all          0.0.0.0/0               md5"
+        insertbefore: "^host( )*all( )*all( )*127.0.0.1/32 ( )*trust*"
+        state: present
+
+    - name: Update listen_address configuration
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/postgresql.conf
+        line: "listen_addresses = '*'"
+        insertbefore: "^#listen_addresses( )*=( )*'localhost'.*"
+        state: present
+
+    - name: Start and enable services
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - postgresql
+    
+    - name: Copy PostgreSQL 10 setup script to server
+      ansible.builtin.copy:
+        src=pg10_setup.sql
+        dest=pg10_setup.sql
+        mode='0600'
+    
+    - name: Create databases for Cloudera software
+      shell: "psql -U postgres -f pg10_setup.sql"
+
+    - name: Configure the SCM database
+      shell: "/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm password"
+
+    - name: Link-Rename the Postgres JDBC driver
+      ansible.builtin.file:
+        src: /usr/share/java/postgresql-jdbc/postgresql.jar
+        path: /usr/share/java/postgresql-connector-java.jar
+        state: link
+        mode: "0644"
+
+    - name: "Install pyhocon"
+      ansible.builtin.pip:
+        executable: pip3.11
+        name: pyhocon
+        state: latest
+        extra_args: --user
+
+    - name: Check ssh directory
+      ansible.builtin.file:
+        path: "~/.ssh"
+        state: directory
+
+    - name: Copy root key to server
+      ansible.builtin.copy:
+        src=~/.ssh/root_key
+        dest=~/.ssh/root_key
+        mode='0600'
+
+    - name: Check license directory
+      ansible.builtin.file:
+        path: "~/.cdp"
+        state: directory
+
+    - name: Copy license files to server
+      ansible.builtin.copy: "src=~/.cloudera/{{ item }} dest=~/.cdp/{{ item }}"
+      with_items:
+        - license.txt
+        - info.txt
+    
+    - name: Start and enable Cloudera SCM  services
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - cloudera-scm-server
+
+    - name: Watch for Started Jetty server
+      debug:
+        msg: "tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log"
+    
+    - name: Wait for Jetty to start before proceeding
+      wait_for:
+        path: /var/log/cloudera-scm-server/cloudera-scm-server.log
+        search_regex: Started Jetty server.
+
+    - name: Install CDP license
+      shell: "curl -i -u admin:admin -X POST -H 'Content-Type:multipart/form-data' -F license=@/root/.cdp/license.txt http://$(hostname):7180/api/v43/cm/license"
+
+    - name: Truncate CM log for License restart [FIXME]
+      ansible.builtin.file:
+        path: "/var/log/cloudera-scm-server/cloudera-scm-server.log"
+        state: "absent"
+
+    - name: "Restart Cloudera Manager"
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Wait for Jetty to start before proceeding
+      wait_for:
+        path: /var/log/cloudera-scm-server/cloudera-scm-server.log
+        search_regex: Started Jetty server.
+        
+  handlers:
+    - name: restart postgres
+      service: name=postgresql state=restarted
+

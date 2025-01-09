@@ -1,0 +1,20 @@
+---
+- name: Setup management environment
+  hosts: base_cluster
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - freeipa-client
+
+  tasks:
+    - name: Display IPA client install command
+      debug:
+        msg: "ipa-client-install --unattended --mkhomedir --hostname $(hostname -f) --realm {{ realm_name }}  --domain $(hostname -d) --server {{ ipa_server_host }} -p admin@{{ realm_name  }} -w *************"
+
+    - name: Execute IPA client install
+      shell: "ipa-client-install --unattended --mkhomedir --hostname $(hostname -f) --realm {{ realm_name }}  --domain $(hostname -d) --server {{ ipa_server_host }} -p admin@{{ realm_name  }} -w {{ the_pwd }}"
+
+
+# ipa-client-install --unattended --mkhomedir --hostname $(hostname -f) --realm DEV.METAL.ZNDX.ORG  --domain $(hostname -d) --server admin-01.dev.metal.zndx.org -p admin@DEV.METAL.ZNDX.ORG -w Super@Secret1

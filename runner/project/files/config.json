@@ -1,0 +1,91 @@
+{
+  "items" : [ {
+    "name" : "AGENT_TLS",
+    "value" : "true",
+    "sensitive" : false
+  }, {
+    "name" : "AUDIT_RECORDS_LIFE_TIME",
+    "value" : "720",
+    "sensitive" : false
+  }, {
+    "name" : "AUTO_TLS_KEYSTORE_PASSWORD",
+    "value" : "REDACTED",
+    "sensitive" : true
+  }, {
+    "name" : "AUTO_TLS_TRUSTSTORE_PASSWORD",
+    "value" : "REDACTED",
+    "sensitive" : true
+  }, {
+    "name" : "AUTO_TLS_TYPE",
+    "value" : "ALL",
+    "sensitive" : false
+  }, {
+    "name" : "CLUSTER_STATS_START",
+    "value" : "10/21/2012 2:00",
+    "sensitive" : false
+  }, {
+    "name" : "HOST_CERT_GENERATOR",
+    "value" : "/opt/cloudera/auto-tls/generate_host_cert",
+    "sensitive" : false
+  }, {
+    "name" : "KDC_ADMIN_HOST",
+    "value" : "ccycloud-1.rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "KDC_HOST",
+    "value" : "ccycloud-1.rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "KDC_TYPE",
+    "value" : "Red Hat IPA",
+    "sensitive" : false
+  }, {
+    "name" : "KEYSTORE_PASSWORD",
+    "value" : "REDACTED",
+    "sensitive" : true
+  }, {
+    "name" : "KEYSTORE_PATH",
+    "value" : "/var/lib/cloudera-scm-agent/agent-cert/cm-auto-host_keystore.jks",
+    "sensitive" : false
+  }, {
+    "name" : "KRB_DOMAIN",
+    "value" : "rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "KRB_ENC_TYPES",
+    "value" : "aes256-cts-hmac-sha1-96",
+    "sensitive" : false
+  }, {
+    "name" : "KRB_MANAGE_KRB5_CONF",
+    "value" : "true",
+    "sensitive" : false
+  }, {
+    "name" : "NEED_AGENT_VALIDATION",
+    "value" : "true",
+    "sensitive" : false
+  }, {
+    "name" : "REMOTE_PARCEL_REPO_URLS",
+    "value" : "https://archive.cloudera.com/p/cdh7/{latest_supported}/parcels/,https://archive.cloudera.com/cdh7/{latest_supported}/parcels/,https://archive.cloudera.com/p/cdh6/{latest_supported}/parcels/,https://archive.cloudera.com/p/cdh5/parcels/latest,https://parcels.repos.intel.com/mkl/latest,https://archive.cloudera.com/accumulo-c5/parcels/latest/,https://archive.cloudera.com/accumulo6/6.1/parcels/,https://archive.cloudera.com/kafka/parcels/latest/,http://archive.cloudera.com/kudu/parcels/latest/,https://archive.cloudera.com/p/spark3/3.3.7180.0/parcels/",
+    "sensitive" : false
+  }, {
+    "name" : "SECURITY_REALM",
+    "value" : "RHILL-DEV.ROOT.HWX.SITE",
+    "sensitive" : false
+  }, {
+    "name" : "SSL_CERTIFICATE_HOSTNAME",
+    "value" : "ccycloud-2.rhill-dev.root.hwx.site",
+    "sensitive" : false
+  }, {
+    "name" : "TRUSTSTORE_PASSWORD",
+    "value" : "REDACTED",
+    "sensitive" : true
+  }, {
+    "name" : "TRUSTSTORE_PATH",
+    "value" : "/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks",
+    "sensitive" : false
+  }, {
+    "name" : "WEB_TLS",
+    "value" : "true",
+    "sensitive" : false
+  } ]
+}

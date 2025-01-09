@@ -1,0 +1,142 @@
+---
+- name: Setup management environment
+  hosts: metal_devops
+  remote_user: root
+  pre_tasks:
+    - name: Enable Terraform repo
+      ansible.builtin.yum_repository:
+        name: hashicorp
+        description: Hashicorp release repo
+        state: present
+        enabled: yes
+        baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+        gpgcheck: true
+        gpgkey: https://rpm.releases.hashicorp.com/gpg
+
+    - name: Ensure packages are installed
+      ansible.builtin.dnf: "name={{ item }} state=present"
+      with_items:
+        - bash
+        - cyrus-sasl-devel
+        - gcc
+        - gcc-c++
+        - git
+        - curl
+        - nmap
+        - sshpass
+        - which
+        - terraform
+        - tree
+        - python39
+        - python39-devel
+        - python39-psycopg2
+        - redis
+        - java-1.8.0-openjdk-devel
+        - java-11-openjdk-devel
+
+  tasks:
+    - name: Remove old Python versions
+      ansible.builtin.dnf:
+        name: python36
+        state: absent
+
+    - name: Check for local repo rpm
+      ansible.builtin.stat:
+        path: /root/pgdg-redhat-repo-latest.noarch.rpm
+      register: pgdg_rpm
+
+    - name: Fetch PostgreSQL 15 repo
+      ansible.builtin.get_url:
+        url: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        dest: /root
+        checksum: sha256:9e90c37c892201058440c1f4b8e86d8a02e16679e21cc5aa5c1e752632d0b6df
+      when: not pgdg_rpm.stat.exists
+
+    - name: Enable PostgreSQL 15 repo
+      ansible.builtin.yum:
+        name: /root/pgdg-redhat-repo-latest.noarch.rpm
+        state: present
+        disable_gpg_check: true
+
+    - name: Disable default PostgreSQL AppStream
+      shell: "dnf module disable postgresql -y"
+
+    - name: Install PostgreSQL 15
+      ansible.builtin.yum:
+        name: postgresql15-server
+        state: latest
+
+    - name: "verify PostgreSQL is initialized"
+      ansible.builtin.stat:
+        path: "/var/lib/pgsql/15/data/pg_hba.conf"
+      register: postgres_data
+
+    - name: "Initialize PostgreSQL"
+      shell: "postgresql-15-setup initdb"
+      when: not postgres_data.stat.exists
+
+    - name: "Start and enable services"
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - postgresql-15
+        - redis
+
+    - name: Allow connection to the Ranger database from any host
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/15/data/pg_hba.conf
+        regexp: "^local( )*all( )*all( )*peer*"
+        line: "local   all             all                                     trust"
+        state: present
+
+    - name: "Reload PostgreSQL configuration"
+      shell: "/usr/pgsql-15/bin/pg_ctl reload -D /var/lib/pgsql/15/data"
+      become: yes
+      become_user: postgres
+
+    - name: Copy PostgreSQL 15 setup script to server
+      ansible.builtin.copy:
+        src=pg15_setup.sql
+        dest=/tmp/pg15_setup.sql
+        mode='0777'
+
+    - name: Create databases for Airflow
+      shell: "psql -U postgres -f /tmp/pg15_setup.sql"
+
+    - name: "Install ansible"
+      ansible.builtin.pip:
+        executable: pip3.9
+        name: ansible
+        state: latest
+
+    - name: "Install jmespath"
+      ansible.builtin.pip:
+        executable: pip3.9
+        name: jmespath
+        state: latest
+
+    - name: Check ssh directory
+      ansible.builtin.file:
+        path: "~/.ssh"
+        state: directory
+
+    - name: Copy root key to server
+      ansible.builtin.copy:
+        src=~/.ssh/root_key
+        dest=~/.ssh/root_key
+        mode='0600'
+
+    - name: Check license directory
+      ansible.builtin.file:
+        path: "~/.cdp"
+        state: directory
+
+    - name: Copy license files to server
+      ansible.builtin.copy: "src=~/.cloudera/{{ item }} dest=~/.cdp/{{ item }}"
+      with_items:
+        - license.txt
+        - info.txt
+
+  handlers:
+    - name: restart postgres
+      service: name=postgresql-15 state=restarted
+

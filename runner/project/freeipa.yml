@@ -1,0 +1,61 @@
+---
+- name: Setup management environment
+  hosts: ccyc_ipa
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - git
+        - rng-tools
+
+  tasks:
+    - name: Verify IPA install
+      ansible.builtin.stat:
+        path: "/etc/ipa/default.conf"
+      register: ipa_default_conf
+
+    - name: Verify Kerberos conf
+      ansible.builtin.stat:
+        path: "{{ keytabs_dir }}/admin.keytab"
+      register: admin_keytab
+      
+    - name: Verify install command
+      debug:
+        msg: "ipa-server-install --hostname=$(hostname -f) --realm {{ realm_name }} -n $(hostname -d) --ds-password {{ the_pwd }} --admin-password ********* --unattended"
+
+    - name: Remove old Python versions
+      ansible.builtin.dnf:
+        name: python36
+        state: absent
+
+    - name: Enable identity management
+      shell: "dnf module enable idm:DL1 -y"
+    
+    - name: Synchronize packages
+      shell: "dnf distro-sync -y"
+
+    - name: Install IdM module (FreeIPA)
+      shell: "dnf module install idm:DL1/server -y"
+
+    - name: Set required umask value
+      shell: "umask 0022"
+
+    - name: Install IPA server
+      shell: "ipa-server-install --hostname=$(hostname -f) --realm {{ realm_name }} -n $(hostname -d) --ds-password {{ the_pwd }} --admin-password {{ the_pwd }} --unattended"
+
+    - name: Start IPA server
+      shell: "ipactl start"
+
+    - name: Copy IPA setup script to server
+      ansible.builtin.copy:
+        src=setup-ipa.sh
+        dest=setup-ipa.sh
+    
+    - name: Execute setup script
+      shell: "sh setup-ipa.sh"
+
+
+
+
+

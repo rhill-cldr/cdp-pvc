@@ -1,0 +1,21 @@
+---
+- name: Configure FreeIPA
+  ansible.builtin.import_playbook: metal-freeipa.yml
+
+- name: Install FreeIPA clients
+  ansible.builtin.import_playbook: metal-freeipa-clients.yml
+
+- name: Configure Cloudera Manager
+  ansible.builtin.import_playbook: metal-cm-install.yml
+
+- name: Configure AutoTLS
+  ansible.builtin.import_playbook: metal-cm-autotls.yml 
+
+- name: Base Cluster Pre-Reqs
+  ansible.builtin.import_playbook: metal-base-cluster.yml 
+
+- name: Configure Kerberos Defaults
+  ansible.builtin.import_playbook: metal-cm-kerberos.yml
+
+# - name: Configure Observability Pre-Reqs
+#   ansible.builtin.import_playbook: metal-otel-cluster.yml

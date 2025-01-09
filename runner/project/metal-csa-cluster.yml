@@ -1,0 +1,35 @@
+---
+- name: Install Cloudera Streaming Analytics
+  hosts: base_cm
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - wget
+
+  tasks:
+    - name: Fetch CSD files
+      shell: "wget -P /opt/cloudera/csd/ https://{{ cloudera_username }}:{{ cloudera_password }}@archive.cloudera.com/p/csa/1.12.0.0/csd/FLINK-1.18.0-csa1.12.0.0-cdh7.1.9.1-158-50079952.jar"
+
+    - name: Fetch CSD files
+      shell: "wget -P /opt/cloudera/csd/ https://{{ cloudera_username }}:{{ cloudera_password }}@archive.cloudera.com/p/csa/1.12.0.0/csd/SQL_STREAM_BUILDER-1.18.0-csa1.12.0.0-cdh7.1.9.1-158-50079952.jar"
+
+    - name: Change ownership of CSD files
+      shell: "chown cloudera-scm:cloudera-scm /opt/cloudera/csd/FLINK-1.18.0-csa1.12.0.0-cdh7.1.9.1-158-50079952.jar"
+        
+    - name: Change ownership of CSD files
+      shell: "chown cloudera-scm:cloudera-scm /opt/cloudera/csd/SQL_STREAM_BUILDER-1.18.0-csa1.12.0.0-cdh7.1.9.1-158-50079952.jar"
+
+    - name: "Restart Cloudera Manager"
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Truncate CM log for restart [FIXME]
+      ansible.builtin.file:
+        path: "/var/log/cloudera-scm-server/cloudera-scm-server.log"
+        state: "absent"
+
+    - name: Wait for Jetty to start before proceeding
+      wait_for:
+        path: /var/log/cloudera-scm-server/cloudera-scm-server.log
+        search_regex: Started Jetty server.

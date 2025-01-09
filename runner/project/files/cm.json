@@ -1,0 +1,160 @@
+{
+  "items": [
+    {
+      "name": "extra_jvm_opts",
+      "value": "-Dlog4j2.formatMsgNoLookups=true -Dcom.sun.jndi.rmi.object.trustURLCodebase=false -Dcom.sun.jndi.cosnaming.object.trustURLCodebase=false"
+    },
+    {
+      "name": "manages_parcels",
+      "value": "true"
+    },
+    {
+      "name": "parcel_autodownload_products",
+      "value": "CDH"
+    },
+    {
+      "name": "download_parcels_automatically",
+      "value": "true"
+    },
+    {
+      "name": "distribute_parcels_automatically",
+      "value": "true"
+    },
+    {
+      "name": "parcel_relation_validation",
+      "value": "false"
+    },
+    {
+      "name": "parcel_install_csd_repo_urls",
+      "value": "false"
+    },
+    {
+      "name": "remote_repo_auth",
+      "value": "false"
+    },
+    {
+      "name": "parcel_distribute_rate_limit_kbs_per_second",
+      "value": "10485760"
+    },
+    {
+      "name": "parcel_max_upload",
+      "value": "50"
+    },
+    {
+      "name": "kdc_type",
+      "value": "Red Hat IPA"
+    },
+    {
+      "name": "security_realm",
+      "value": "RHILL-DEV.ROOT.HWX.SITE"
+    },
+    {
+      "name": "KRB_ENC_TYPES",
+      "value": "aes256-cts-hmac-sha1-96"
+    },
+    {
+      "name": "kdc_host",
+      "value": "ccycloud-1.rhill-dev.root.hwx.site"
+    },
+    {
+      "name": "kdc_admin_host",
+      "value": "ccycloud-1.rhill-dev.root.hwx.site"
+    },
+    {
+      "name": "krb_domain",
+      "value": "rhill-dev.root.hwx.site"
+    },
+    {
+      "name": "auth_backend_order",
+      "value": "DB_THEN_LDAP"
+    },
+    {
+      "name": "authorization_backend_order",
+      "value": "EXTERNAL_AND_DB"
+    },
+    {
+      "name": "ldap_type",
+      "value": "LDAP"
+    },
+    {
+      "name": "ldap_url",
+      "value": "ldaps://ccycloud-1.rhill-dev.root.hwx.site:636"
+    },
+    {
+      "name": "ldap_bind_dn",
+      "value": "uid=cdpadmin,cn=users,cn=compat,dc=dir-unixprod"
+    },
+    {
+      "name": "ldap_bind_pw",
+      "value": "Super@Secret1"
+    },
+    {
+      "name": "ldap_user_search_base",
+      "value": "cn=users,cn=compat,dc=dir-unixprod"
+    },
+    {
+      "name": "ldap_user_search_filter",
+      "value": "(&(objectClass=posixAccount)(uid={0}))"
+    },
+    {
+      "name": "ldap_group_search_base",
+      "value": "cn=groups,cn=accounts,dc=dir-unixprod"
+    },
+    {
+      "name": "ldap_group_search_filter",
+      "value": "member={0}"
+    },
+    {
+      "name": "web_tls",
+      "value": "true"
+    },
+    {
+      "name": "agent_tls",
+      "value": "true"
+    },
+    {
+      "name": "keystore_path",
+      "value": "/opt/cloudera/security/pki/host.jks"
+    },
+    {
+      "name": "keystore_password",
+      "value": "Super@Secret1"
+    },
+    {
+      "name": "truststore_path",
+      "value": "/opt/cloudera/security/pki/truststore.jks"
+    },
+    {
+      "name": "truststore_password",
+      "value": "Super@Secret1"
+    },
+    {
+      "name": "need_agent_validation",
+      "value": "true"
+    },
+    {
+      "name": "need_agent_hostname_validation",
+      "value": "true"
+    },
+    {
+      "name": "auto_tls_type",
+      "value": "NONE"
+    },
+    {
+      "name": "auto_tls_keystore_password",
+      "value": "Super@Secret1"
+    },
+    {
+      "name": "auto_tls_truststore_password",
+      "value": "Super@Secret1"
+    },
+    {
+      "name": "enable_embedded_db_check",
+      "value": "false"
+    },
+    {
+      "name": "session_timeout",
+      "value": "7200"
+    }
+  ]
+}

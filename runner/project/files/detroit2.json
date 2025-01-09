@@ -1,0 +1,734 @@
+{
+  "cdhVersion" : "7.1.8",
+  "displayName" : "Detroit",
+  "cmVersion" : "7.7.3",
+  "repositories" : [ "https://archive.cloudera.com/p/cdh7/{latest_supported}/parcels/", "https://archive.cloudera.com/cdh7/{latest_supported}/parcels/", "https://archive.cloudera.com/p/cdh6/{latest_supported}/parcels/", "https://archive.cloudera.com/p/cdh5/parcels/latest", "https://parcels.repos.intel.com/mkl/latest", "https://archive.cloudera.com/accumulo-c5/parcels/latest/", "https://archive.cloudera.com/accumulo6/6.1/parcels/", "https://archive.cloudera.com/kafka/parcels/latest/", "http://archive.cloudera.com/kudu/parcels/latest/", "https://archive.cloudera.com/p/spark3/3.3.7180.0/parcels/" ],
+  "products" : [ {
+    "version" : "3.3.0.3.3.7180.0-274-1.p0.31212967",
+    "product" : "SPARK3"
+  }, {
+    "version" : "7.1.8-1.cdh7.1.8.p0.30990532",
+    "product" : "CDH"
+  } ],
+  "services" : [ {
+    "refName" : "core_settings",
+    "serviceType" : "CORE_SETTINGS",
+    "serviceConfigs" : [ {
+      "name" : "hadoop_security_authorization",
+      "value" : "true"
+    }, {
+      "name" : "hadoop_security_authentication",
+      "value" : "kerberos"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "core_settings-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "sqoop_client",
+    "serviceType" : "SQOOP_CLIENT",
+    "roleConfigGroups" : [ {
+      "refName" : "sqoop_client-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "tez",
+    "serviceType" : "TEZ",
+    "roleConfigGroups" : [ {
+      "refName" : "tez-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "spark3_on_yarn",
+    "serviceType" : "SPARK3_ON_YARN",
+    "roleConfigGroups" : [ {
+      "refName" : "spark3_on_yarn-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    }, {
+      "refName" : "spark3_on_yarn-SPARK3_YARN_HISTORY_SERVER-BASE",
+      "roleType" : "SPARK3_YARN_HISTORY_SERVER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "phoenix",
+    "serviceType" : "PHOENIX",
+    "roleConfigGroups" : [ {
+      "refName" : "phoenix-PHOENIX_QUERY_SERVER-BASE",
+      "roleType" : "PHOENIX_QUERY_SERVER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "queuemanager",
+    "serviceType" : "QUEUEMANAGER",
+    "serviceConfigs" : [ {
+      "name" : "kerberos.auth.enabled",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "queuemanager-QUEUEMANAGER_WEBAPP-BASE",
+      "roleType" : "QUEUEMANAGER_WEBAPP",
+      "base" : true
+    }, {
+      "refName" : "queuemanager-QUEUEMANAGER_STORE-BASE",
+      "roleType" : "QUEUEMANAGER_STORE",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "kafka",
+    "serviceType" : "KAFKA",
+    "serviceConfigs" : [ {
+      "name" : "kerberos.auth.enable",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "kafka-KAFKA_BROKER-BASE",
+      "roleType" : "KAFKA_BROKER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "hue",
+    "serviceType" : "HUE",
+    "serviceConfigs" : [ {
+      "name" : "database_password",
+      "variable" : "hue-database_password"
+    }, {
+      "name" : "database_type",
+      "variable" : "hue-database_type"
+    }, {
+      "name" : "database_port",
+      "variable" : "hue-database_port"
+    }, {
+      "name" : "database_host",
+      "variable" : "hue-database_host"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "hue-HUE_SERVER-BASE",
+      "roleType" : "HUE_SERVER",
+      "base" : true
+    }, {
+      "refName" : "hue-KT_RENEWER-BASE",
+      "roleType" : "KT_RENEWER",
+      "base" : true
+    }, {
+      "refName" : "hue-HUE_LOAD_BALANCER-BASE",
+      "roleType" : "HUE_LOAD_BALANCER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "knox",
+    "serviceType" : "KNOX",
+    "serviceConfigs" : [ {
+      "name" : "kerberos.auth.enabled",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "knox-KNOX_GATEWAY-BASE",
+      "roleType" : "KNOX_GATEWAY",
+      "configs" : [ {
+        "name" : "gateway_master_secret",
+        "variable" : "knox-KNOX_GATEWAY-BASE-gateway_master_secret"
+      } ],
+      "base" : true
+    } ]
+  }, {
+    "refName" : "hdfs",
+    "serviceType" : "HDFS",
+    "serviceConfigs" : [ {
+      "name" : "dfs_encrypt_data_transfer_algorithm",
+      "value" : "AES/CTR/NoPadding"
+    }, {
+      "name" : "hadoop_secure_web_ui",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "hdfs-NAMENODE-BASE",
+      "roleType" : "NAMENODE",
+      "base" : true
+    }, {
+      "refName" : "hdfs-SECONDARYNAMENODE-BASE",
+      "roleType" : "SECONDARYNAMENODE",
+      "base" : true
+    }, {
+      "refName" : "hdfs-DATANODE-BASE",
+      "roleType" : "DATANODE",
+      "configs" : [ {
+        "name" : "dfs_datanode_data_dir_perm",
+        "value" : "700"
+      }, {
+        "name" : "dfs_datanode_port",
+        "value" : "1004"
+      }, {
+        "name" : "dfs_datanode_http_port",
+        "value" : "1006"
+      } ],
+      "base" : true
+    }, {
+      "refName" : "hdfs-BALANCER-BASE",
+      "roleType" : "BALANCER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "atlas",
+    "serviceType" : "ATLAS",
+    "serviceConfigs" : [ {
+      "name" : "kerberos.auth.enable",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "atlas-ATLAS_SERVER-BASE",
+      "roleType" : "ATLAS_SERVER",
+      "configs" : [ {
+        "name" : "atlas_admin_password",
+        "variable" : "atlas-ATLAS_SERVER-BASE-atlas_admin_password"
+      } ],
+      "base" : true
+    }, {
+      "refName" : "atlas-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "hive_on_tez",
+    "serviceType" : "HIVE_ON_TEZ",
+    "roleConfigGroups" : [ {
+      "refName" : "hive_on_tez-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    }, {
+      "refName" : "hive_on_tez-HIVESERVER2-BASE",
+      "roleType" : "HIVESERVER2",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "ranger",
+    "serviceType" : "RANGER",
+    "serviceConfigs" : [ {
+      "name" : "rangerusersync_user_password",
+      "variable" : "ranger-rangerusersync_user_password"
+    }, {
+      "name" : "rangertagsync_user_password",
+      "variable" : "ranger-rangertagsync_user_password"
+    }, {
+      "name" : "keyadmin_user_password",
+      "variable" : "ranger-keyadmin_user_password"
+    }, {
+      "name" : "ranger_database_user",
+      "variable" : "ranger-ranger_database_user"
+    }, {
+      "name" : "ranger_database_host",
+      "variable" : "ranger-ranger_database_host"
+    }, {
+      "name" : "ranger_database_password",
+      "variable" : "ranger-ranger_database_password"
+    }, {
+      "name" : "rangeradmin_user_password",
+      "variable" : "ranger-rangeradmin_user_password"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "ranger-RANGER_USERSYNC-BASE",
+      "roleType" : "RANGER_USERSYNC",
+      "base" : true
+    }, {
+      "refName" : "ranger-RANGER_ADMIN-BASE",
+      "roleType" : "RANGER_ADMIN",
+      "base" : true
+    }, {
+      "refName" : "ranger-RANGER_TAGSYNC-BASE",
+      "roleType" : "RANGER_TAGSYNC",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "ozone",
+    "serviceType" : "OZONE",
+    "serviceConfigs" : [ {
+      "name" : "ozone.service.id",
+      "value" : "svc1"
+    }, {
+      "name" : "ozone.security.enabled",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "ozone-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    }, {
+      "refName" : "ozone-OZONE_RECON-BASE",
+      "roleType" : "OZONE_RECON",
+      "base" : true
+    }, {
+      "refName" : "ozone-STORAGE_CONTAINER_MANAGER-BASE",
+      "roleType" : "STORAGE_CONTAINER_MANAGER",
+      "base" : true
+    }, {
+      "refName" : "ozone-OZONE_DATANODE-BASE",
+      "roleType" : "OZONE_DATANODE",
+      "base" : true
+    }, {
+      "refName" : "ozone-S3_GATEWAY-BASE",
+      "roleType" : "S3_GATEWAY",
+      "base" : true
+    }, {
+      "refName" : "ozone-OZONE_MANAGER-BASE",
+      "roleType" : "OZONE_MANAGER",
+      "base" : true
+    }, {
+      "refName" : "ozone-OZONE_PROMETHEUS-BASE",
+      "roleType" : "OZONE_PROMETHEUS",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "kudu",
+    "serviceType" : "KUDU",
+    "serviceConfigs" : [ {
+      "name" : "enable_security",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "kudu-KUDU_MASTER-BASE",
+      "roleType" : "KUDU_MASTER",
+      "configs" : [ {
+        "name" : "fs_wal_dir",
+        "variable" : "kudu-KUDU_MASTER-BASE-fs_wal_dir"
+      }, {
+        "name" : "fs_data_dirs",
+        "variable" : "kudu-KUDU_MASTER-BASE-fs_data_dirs"
+      } ],
+      "base" : true
+    }, {
+      "refName" : "kudu-KUDU_TSERVER-BASE",
+      "roleType" : "KUDU_TSERVER",
+      "configs" : [ {
+        "name" : "fs_wal_dir",
+        "variable" : "kudu-KUDU_TSERVER-BASE-fs_wal_dir"
+      }, {
+        "name" : "fs_data_dirs",
+        "variable" : "kudu-KUDU_TSERVER-BASE-fs_data_dirs"
+      } ],
+      "base" : true
+    } ]
+  }, {
+    "refName" : "solr",
+    "serviceType" : "SOLR",
+    "serviceConfigs" : [ {
+      "name" : "solr_security_authentication",
+      "value" : "kerberos"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "solr-SOLR_SERVER-BASE",
+      "roleType" : "SOLR_SERVER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "hbase",
+    "serviceType" : "HBASE",
+    "serviceConfigs" : [ {
+      "name" : "hbase_thriftserver_security_authentication",
+      "value" : "auth-conf"
+    }, {
+      "name" : "hbase_security_authentication",
+      "value" : "kerberos"
+    }, {
+      "name" : "hbase_security_authorization",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "hbase-REGIONSERVER-BASE",
+      "roleType" : "REGIONSERVER",
+      "base" : true
+    }, {
+      "refName" : "hbase-MASTER-BASE",
+      "roleType" : "MASTER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "spark_on_yarn",
+    "serviceType" : "SPARK_ON_YARN",
+    "roleConfigGroups" : [ {
+      "refName" : "spark_on_yarn-SPARK_YARN_HISTORY_SERVER-BASE",
+      "roleType" : "SPARK_YARN_HISTORY_SERVER",
+      "base" : true
+    }, {
+      "refName" : "spark_on_yarn-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "oozie",
+    "serviceType" : "OOZIE",
+    "roleConfigGroups" : [ {
+      "refName" : "oozie-OOZIE_SERVER-BASE",
+      "roleType" : "OOZIE_SERVER",
+      "configs" : [ {
+        "name" : "oozie_database_type",
+        "variable" : "oozie-OOZIE_SERVER-BASE-oozie_database_type"
+      }, {
+        "name" : "oozie_database_password",
+        "variable" : "oozie-OOZIE_SERVER-BASE-oozie_database_password"
+      }, {
+        "name" : "oozie_database_user",
+        "variable" : "oozie-OOZIE_SERVER-BASE-oozie_database_user"
+      }, {
+        "name" : "oozie_database_host",
+        "variable" : "oozie-OOZIE_SERVER-BASE-oozie_database_host"
+      } ],
+      "base" : true
+    } ]
+  }, {
+    "refName" : "hive",
+    "serviceType" : "HIVE",
+    "serviceConfigs" : [ {
+      "name" : "hive_metastore_database_password",
+      "variable" : "hive-hive_metastore_database_password"
+    }, {
+      "name" : "hive_metastore_database_host",
+      "variable" : "hive-hive_metastore_database_host"
+    }, {
+      "name" : "hive_metastore_database_type",
+      "variable" : "hive-hive_metastore_database_type"
+    }, {
+      "name" : "hive_metastore_database_name",
+      "variable" : "hive-hive_metastore_database_name"
+    }, {
+      "name" : "hive_metastore_database_port",
+      "variable" : "hive-hive_metastore_database_port"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "hive-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    }, {
+      "refName" : "hive-HIVEMETASTORE-BASE",
+      "roleType" : "HIVEMETASTORE",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "yarn",
+    "serviceType" : "YARN",
+    "serviceConfigs" : [ {
+      "name" : "hadoop_secure_web_ui",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "yarn-NODEMANAGER-6",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-NODEMANAGER-7",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-NODEMANAGER-4",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-NODEMANAGER-5",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-NODEMANAGER-BASE",
+      "roleType" : "NODEMANAGER",
+      "base" : true
+    }, {
+      "refName" : "yarn-NODEMANAGER-2",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-NODEMANAGER-3",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-NODEMANAGER-1",
+      "roleType" : "NODEMANAGER",
+      "base" : false
+    }, {
+      "refName" : "yarn-JOBHISTORY-BASE",
+      "roleType" : "JOBHISTORY",
+      "base" : true
+    }, {
+      "refName" : "yarn-RESOURCEMANAGER-BASE",
+      "roleType" : "RESOURCEMANAGER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "schemaregistry",
+    "serviceType" : "SCHEMAREGISTRY",
+    "serviceConfigs" : [ {
+      "name" : "database_host",
+      "variable" : "schemaregistry-database_host"
+    }, {
+      "name" : "database_port",
+      "variable" : "schemaregistry-database_port"
+    }, {
+      "name" : "database_password",
+      "variable" : "schemaregistry-database_password"
+    }, {
+      "name" : "database_type",
+      "variable" : "schemaregistry-database_type"
+    }, {
+      "name" : "kerberos.auth.enable",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "schemaregistry-GATEWAY-BASE",
+      "roleType" : "GATEWAY",
+      "base" : true
+    }, {
+      "refName" : "schemaregistry-SCHEMA_REGISTRY_SERVER-BASE",
+      "roleType" : "SCHEMA_REGISTRY_SERVER",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "impala",
+    "serviceType" : "IMPALA",
+    "serviceConfigs" : [ {
+      "name" : "hadoop_secure_web_ui",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "impala-IMPALAD-2",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-IMPALAD-1",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-IMPALAD-4",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-IMPALAD-3",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-IMPALAD-6",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-IMPALAD-5",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-IMPALAD-BASE",
+      "roleType" : "IMPALAD",
+      "base" : true
+    }, {
+      "refName" : "impala-CATALOGSERVER-BASE",
+      "roleType" : "CATALOGSERVER",
+      "base" : true
+    }, {
+      "refName" : "impala-IMPALAD-7",
+      "roleType" : "IMPALAD",
+      "base" : false
+    }, {
+      "refName" : "impala-STATESTORE-BASE",
+      "roleType" : "STATESTORE",
+      "base" : true
+    } ]
+  }, {
+    "refName" : "zookeeper",
+    "serviceType" : "ZOOKEEPER",
+    "serviceConfigs" : [ {
+      "name" : "quorum_auth_enable_sasl",
+      "value" : "true"
+    }, {
+      "name" : "enableSecurity",
+      "value" : "true"
+    } ],
+    "roleConfigGroups" : [ {
+      "refName" : "zookeeper-SERVER-BASE",
+      "roleType" : "SERVER",
+      "base" : true
+    } ]
+  } ],
+  "hostTemplates" : [ {
+    "refName" : "HostTemplate-0-from-ccycloud-11.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-MASTER-BASE", "hdfs-BALANCER-BASE", "hdfs-NAMENODE-BASE", "hdfs-SECONDARYNAMENODE-BASE", "hive-GATEWAY-BASE", "hive-HIVEMETASTORE-BASE", "hive_on_tez-HIVESERVER2-BASE", "hue-HUE_LOAD_BALANCER-BASE", "hue-HUE_SERVER-BASE", "hue-KT_RENEWER-BASE", "impala-CATALOGSERVER-BASE", "impala-STATESTORE-BASE", "oozie-OOZIE_SERVER-BASE", "ozone-GATEWAY-BASE", "solr-SOLR_SERVER-BASE", "spark_on_yarn-GATEWAY-BASE", "spark_on_yarn-SPARK_YARN_HISTORY_SERVER-BASE", "tez-GATEWAY-BASE", "yarn-JOBHISTORY-BASE", "yarn-RESOURCEMANAGER-BASE", "zookeeper-SERVER-BASE" ]
+  }, {
+    "refName" : "HostTemplate-1-from-ccycloud-8.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-7", "kafka-KAFKA_BROKER-BASE", "kudu-KUDU_TSERVER-BASE", "ozone-GATEWAY-BASE", "spark3_on_yarn-GATEWAY-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-7" ]
+  }, {
+    "refName" : "HostTemplate-2-from-ccycloud-5.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-5", "kafka-KAFKA_BROKER-BASE", "ozone-GATEWAY-BASE", "ozone-OZONE_DATANODE-BASE", "ozone-OZONE_MANAGER-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-5" ]
+  }, {
+    "refName" : "HostTemplate-3-from-ccycloud-9.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-4", "kafka-KAFKA_BROKER-BASE", "ozone-GATEWAY-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-4" ]
+  }, {
+    "refName" : "HostTemplate-4-from-ccycloud-4.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-BASE", "kafka-KAFKA_BROKER-BASE", "kudu-KUDU_MASTER-BASE", "ozone-GATEWAY-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-BASE", "zookeeper-SERVER-BASE" ]
+  }, {
+    "refName" : "HostTemplate-5-from-ccycloud-3.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "atlas-GATEWAY-BASE", "core_settings-GATEWAY-BASE", "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-3", "kafka-KAFKA_BROKER-BASE", "ozone-GATEWAY-BASE", "schemaregistry-GATEWAY-BASE", "spark_on_yarn-GATEWAY-BASE", "sqoop_client-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-3" ]
+  }, {
+    "refName" : "HostTemplate-6-from-ccycloud-6.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-1", "kafka-KAFKA_BROKER-BASE", "kudu-KUDU_TSERVER-BASE", "ozone-GATEWAY-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-1", "zookeeper-SERVER-BASE" ]
+  }, {
+    "refName" : "HostTemplate-7-from-ccycloud-7.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "atlas-ATLAS_SERVER-BASE", "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "impala-IMPALAD-2", "kafka-KAFKA_BROKER-BASE", "knox-KNOX_GATEWAY-BASE", "ozone-GATEWAY-BASE", "ozone-OZONE_DATANODE-BASE", "ozone-OZONE_MANAGER-BASE", "ozone-OZONE_RECON-BASE", "ozone-S3_GATEWAY-BASE", "ozone-STORAGE_CONTAINER_MANAGER-BASE", "phoenix-PHOENIX_QUERY_SERVER-BASE", "queuemanager-QUEUEMANAGER_STORE-BASE", "queuemanager-QUEUEMANAGER_WEBAPP-BASE", "ranger-RANGER_ADMIN-BASE", "ranger-RANGER_TAGSYNC-BASE", "ranger-RANGER_USERSYNC-BASE", "schemaregistry-SCHEMA_REGISTRY_SERVER-BASE", "spark3_on_yarn-SPARK3_YARN_HISTORY_SERVER-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-2" ]
+  }, {
+    "refName" : "HostTemplate-8-from-ccycloud-10.rhill-dev.root.hwx.site",
+    "cardinality" : 1,
+    "roleConfigGroupsRefNames" : [ "hbase-REGIONSERVER-BASE", "hdfs-DATANODE-BASE", "hive-GATEWAY-BASE", "hive_on_tez-GATEWAY-BASE", "impala-IMPALAD-6", "kafka-KAFKA_BROKER-BASE", "ozone-GATEWAY-BASE", "ozone-OZONE_DATANODE-BASE", "ozone-OZONE_MANAGER-BASE", "ozone-OZONE_PROMETHEUS-BASE", "spark_on_yarn-GATEWAY-BASE", "tez-GATEWAY-BASE", "yarn-NODEMANAGER-6" ]
+  } ],
+  "tags" : [ {
+    "name" : "_cldr_cluster.core_settings.service_name",
+    "value" : "core_settings"
+  } ],
+  "instantiator" : {
+    "clusterName" : "<changeme>",
+    "hosts" : [ {
+      "hostName" : "<changeme>",
+      "hostTemplateRefName" : "<changeme>"
+    }, {
+      "hostNameRange" : "<HOST[0001-0002]>",
+      "hostTemplateRefName" : "<changeme>"
+    } ],
+    "variables" : [ {
+      "name" : "atlas-ATLAS_SERVER-BASE-atlas_admin_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "hive-hive_metastore_database_host",
+      "value" : "ccycloud-2.rhill-dev.root.hwx.site"
+    }, {
+      "name" : "hive-hive_metastore_database_name",
+      "value" : "hive"
+    }, {
+      "name" : "hive-hive_metastore_database_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "hive-hive_metastore_database_port",
+      "value" : "5432"
+    }, {
+      "name" : "hive-hive_metastore_database_type",
+      "value" : "postgresql"
+    }, {
+      "name" : "hue-database_host",
+      "value" : "ccycloud-2.rhill-dev.root.hwx.site"
+    }, {
+      "name" : "hue-database_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "hue-database_port",
+      "value" : "5432"
+    }, {
+      "name" : "hue-database_type",
+      "value" : "postgresql"
+    }, {
+      "name" : "knox-KNOX_GATEWAY-BASE-gateway_master_secret",
+      "value" : "<changeme>"
+    }, {
+      "name" : "kudu-KUDU_MASTER-BASE-fs_data_dirs",
+      "value" : "/var/lib/kudu/master/data"
+    }, {
+      "name" : "kudu-KUDU_MASTER-BASE-fs_wal_dir",
+      "value" : "/var/lib/kudu/master/wal"
+    }, {
+      "name" : "kudu-KUDU_TSERVER-BASE-fs_data_dirs",
+      "value" : "/var/lib/kudu/ts/data"
+    }, {
+      "name" : "kudu-KUDU_TSERVER-BASE-fs_wal_dir",
+      "value" : "/var/lib/kudu/ts/wal"
+    }, {
+      "name" : "oozie-OOZIE_SERVER-BASE-oozie_database_host",
+      "value" : "ccycloud-2.rhill-dev.root.hwx.site"
+    }, {
+      "name" : "oozie-OOZIE_SERVER-BASE-oozie_database_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "oozie-OOZIE_SERVER-BASE-oozie_database_type",
+      "value" : "postgresql"
+    }, {
+      "name" : "oozie-OOZIE_SERVER-BASE-oozie_database_user",
+      "value" : "oozie"
+    }, {
+      "name" : "ranger-keyadmin_user_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "ranger-ranger_database_host",
+      "value" : "ccycloud-2.rhill-dev.root.hwx.site"
+    }, {
+      "name" : "ranger-ranger_database_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "ranger-ranger_database_user",
+      "value" : "rangerkms"
+    }, {
+      "name" : "ranger-rangeradmin_user_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "ranger-rangertagsync_user_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "ranger-rangerusersync_user_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "schemaregistry-database_host",
+      "value" : "ccycloud-2.rhill-dev.root.hwx.site"
+    }, {
+      "name" : "schemaregistry-database_password",
+      "value" : "<changeme>"
+    }, {
+      "name" : "schemaregistry-database_port",
+      "value" : "5432"
+    }, {
+      "name" : "schemaregistry-database_type",
+      "value" : "postgresql"
+    } ],
+    "roleConfigGroups" : [ {
+      "rcgRefName" : "yarn-NODEMANAGER-6",
+      "name" : ""
+    }, {
+      "rcgRefName" : "yarn-NODEMANAGER-7",
+      "name" : ""
+    }, {
+      "rcgRefName" : "yarn-NODEMANAGER-4",
+      "name" : ""
+    }, {
+      "rcgRefName" : "yarn-NODEMANAGER-5",
+      "name" : ""
+    }, {
+      "rcgRefName" : "yarn-NODEMANAGER-2",
+      "name" : ""
+    }, {
+      "rcgRefName" : "yarn-NODEMANAGER-3",
+      "name" : ""
+    }, {
+      "rcgRefName" : "yarn-NODEMANAGER-1",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-2",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-1",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-4",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-3",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-6",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-5",
+      "name" : ""
+    }, {
+      "rcgRefName" : "impala-IMPALAD-7",
+      "name" : ""
+    } ],
+    "lenient" : false
+  }
+}
