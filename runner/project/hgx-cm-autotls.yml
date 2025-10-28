@@ -1,0 +1,59 @@
+---
+- name: Configure AutoTLS
+  hosts: cm
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - jq
+  
+  tasks:
+    - name: Copy auto-tls configuration files to server
+      ansible.builtin.copy: "src={{ item }} dest={{ item }}"
+      with_items:
+        - hgx-cmca.json
+        - hgx-cmca.sh
+      
+    - name: Copy pvc_key to server
+      ansible.builtin.copy:
+        src: "{{ ansible_ssh_private_key_file }}"
+        dest: /root/.cdp/pvc_key
+        mode: '0600'
+
+    - name: Check pki working directory
+      ansible.builtin.file:
+        path: /root/pki
+        state: directory
+        mode: '0755'
+
+    - name: Check auto-tls tmp directory
+      ansible.builtin.file:
+        path: /tmp/auto-tls
+        state: directory
+        mode: '0755'
+
+    - name: Check auto-tls Cloudera directory
+      ansible.builtin.file:
+        path: /opt/cloudera/auto-tls
+        state: directory
+        mode: '0755'
+
+    - name: Configure AutoTLS
+      ansible.builtin.script:
+        chdir: /root/pki
+        cmd: hgx-cmca.sh
+        creates: /opt/cloudera/auto-tls/hosts-key-store/{{ inventory_hostname }}/cm-auto-host_keystore.jks
+
+    - name: "Restart Cloudera Manager"
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Wait for Cloudera Manager web UI port to be available
+      ansible.builtin.wait_for:
+        port: 7180
+        host: "{{ inventory_hostname }}"
+        delay: 5
+        timeout: 300
+        
+
+

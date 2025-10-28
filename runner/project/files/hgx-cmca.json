@@ -1,0 +1,42 @@
+{
+"location" : "/opt/cloudera/auto-tls",
+"customCA" : false,
+"interpretAsFilenames" : true,
+"cmHostCert" : "",
+"cmHostKey" : "",
+"caCert" : "",
+"keystorePasswd" : "",
+"truststorePasswd" : "",
+"trustedCaCerts" : "",
+"hostCerts" : [ {
+"hostname" : "0398-dsm-lvcpu.kcloud-dev.comops.cloudera.com.maintenance.kcloud-dev.comops.cloudera.com",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "0400-dsm-lvcpu.kcloud-dev.comops.cloudera.com.maintenance.kcloud-dev.comops.cloudera.com",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "0401-dsm-lvcpu.kcloud-dev.comops.cloudera.com.maintenance.kcloud-dev.comops.cloudera.com",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "0402-dsm-lvcpu.kcloud-dev.comops.cloudera.com.maintenance.kcloud-dev.comops.cloudera.com",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "0403-dsm-lvcpu.kcloud-dev.comops.cloudera.com.maintenance.kcloud-dev.comops.cloudera.com",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}, {
+"hostname" : "0404-dsm-lvcpu.kcloud-dev.comops.cloudera.com.maintenance.kcloud-dev.comops.cloudera.com",
+"certificate" : "/tmp/auto-tls/server.pem",
+"key" : "/tmp/auto-tls/server-key.pem"
+}],
+"configureAllServices" : "true",
+"sshPort" : 22,
+"userName" : "root",
+"password" : "",
+"privateKey":"/root/.cdp/pvc_key",
+"passphrase": "Super@Secret1"
+}

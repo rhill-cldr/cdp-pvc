@@ -1,0 +1,51 @@
+---
+- name: Configure Kerberos Defaults
+  hosts: base
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - curl
+  
+  tasks:
+    - name: Copy Kerberos configuration files to server
+      ansible.builtin.copy: "src={{ item }} dest={{ item }}"
+      with_items:
+        - krb.json
+
+    - name: Get the contents of the last line in cloudera-scm-server.log
+      shell: tail -n 1 /var/log/cloudera-scm-server/cloudera-scm-server.log
+      register: tail_output
+
+    - name: Create a variable with a meaningful name, just for clarity
+      set_fact:
+        last_line_of_the_log_file: "{{ tail_output.stdout }}"
+
+    - name: Configure Kerberos defaults in Cloudera Manager
+      shell: "curl -k -u admin:admin -H 'Content-Type:application/json' -H 'Accept:application/json' -X PUT -d @krb.json https://$(hostname):7183/api/v43/cm/config"
+
+    - name: Truncate CM log [FIXME]
+      ansible.builtin.file:
+        path: "/var/log/cloudera-scm-server/cloudera-scm-server.log"
+        state: "absent"
+
+    - name: "Restart Cloudera Manager"
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Wait for Jetty to start before proceeding
+      wait_for:
+        path: /var/log/cloudera-scm-server/cloudera-scm-server.log
+        search_regex: Started Jetty server.
+
+    - name: "Restart Cloudera Manager"
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Wait for Cloudera Manager web UI port to be available
+      ansible.builtin.wait_for:
+        port: 7180
+        host: "{{ inventory_hostname }}"
+        delay: 5
+        timeout: 300
+        
+

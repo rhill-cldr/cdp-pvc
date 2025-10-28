@@ -1,0 +1,165 @@
+  
+---
+- name: Setup Cloudera Manager
+  hosts: cm
+  remote_user: root
+  pre_tasks:
+    - name: Enable Cloudera Manager repo
+      ansible.builtin.yum_repository:
+        name: cloudera-manager
+        description: Cloudera Manager repo
+        state: present
+        enabled: yes
+        baseurl: https://{{ cloudera_username }}:{{ cloudera_password }}@archive.cloudera.com/p/cm7/7.13.1.400/redhat9/yum
+        gpgcheck: true
+        gpgkey: https://{{ cloudera_username }}:{{ cloudera_password }}@archive.cloudera.com/p/cm7/7.13.1.400/redhat9/yum/RPM-GPG-KEY-cloudera
+
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - python3.11
+        - python3.11-pip
+        - postgresql-server
+        - python3.11-psycopg2
+        - java-11-openjdk-devel
+        - postgresql-jdbc
+        - cloudera-manager-daemons
+        - cloudera-manager-agent
+        - cloudera-manager-server
+
+  tasks:
+    - name: Ensure LC_ALL is set in /etc/locale.conf
+      ansible.builtin.lineinfile:
+        path: /etc/locale.conf
+        line: 'LC_ALL="en_US.UTF-8"'
+        create: yes
+
+    - name: Download PGDG repo RPM for PostgreSQL 16
+      ansible.builtin.get_url:
+        url: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        dest: /root/pgdg-redhat-repo-latest.noarch.rpm
+
+    - name: Install PGDG repo RPM
+      ansible.builtin.yum:
+        name: /root/pgdg-redhat-repo-latest.noarch.rpm
+        state: present
+        disable_gpg_check: true
+
+    - name: Disable default PostgreSQL AppStream module
+      ansible.builtin.shell: dnf -y module disable postgresql
+
+    - name: Install PostgreSQL 16 packages
+      ansible.builtin.yum:
+        name:
+          - postgresql16
+          - postgresql16-server
+          - postgresql16-contrib
+          - postgresql16-libs
+        state: latest
+
+    - name: Initialize PostgreSQL 16 database
+      ansible.builtin.command:
+        cmd: /usr/pgsql-16/bin/postgresql-16-setup initdb
+      args:
+        creates: /var/lib/pgsql/16/data/PG_VERSION
+
+    - name: Set postgresql.conf parameters
+      ansible.builtin.blockinfile:
+        path: /var/lib/pgsql/16/data/postgresql.conf
+        block: |
+          listen_addresses = '*'
+          max_connections = 1000
+          shared_buffers = 256MB
+          wal_buffers = 8MB
+          checkpoint_completion_target = 0.9
+
+    - name: Configure pg_hba.conf for IPv4 connections
+      ansible.builtin.blockinfile:
+        path: /var/lib/pgsql/16/data/pg_hba.conf
+        block: |
+          # IPv4 local connections:
+          host    all             all             0.0.0.0/0               md5
+          host    all             all             0.0.0.0/0               ident
+          # Peer authentication for local postgres user
+          host   all             postgres         127.0.0.1/32            trust
+
+    - name: Enable postgresql-16 service
+      ansible.builtin.service:
+        name: postgresql-16
+        enabled: yes
+
+    - name: Start postgresql-16 service
+      ansible.builtin.service:
+        name: postgresql-16
+        state: started
+
+    - name: Backup original psql binary if it exists
+      ansible.builtin.command:
+        cmd: mv /usr/bin/psql /usr/bin/psql-bk
+      args:
+        removes: /usr/bin/psql
+        creates: /usr/bin/psql-bk
+      ignore_errors: yes
+
+    - name: Ensure /usr/pgsql-16/bin is in PATH
+      ansible.builtin.shell: |
+        echo 'export PATH=/usr/pgsql-16/bin:$PATH' >> /etc/profile.d/pgsql16.sh
+      args:
+        creates: /etc/profile.d/pgsql16.sh
+
+    - name: Copy pg16_setup.sql to server
+      ansible.builtin.copy:
+        src: files/pg16_setup.sql
+        dest: /tmp/pg16_setup.sql
+
+    #- name: Create databases for Cloudera software
+    #  shell: "/usr/pgsql-16/bin/psql -U postgres -f /tmp/pg16_setup.sql"
+    #  become: yes
+    #  become_user: postgres
+
+    - name: Configure the SCM database
+      shell: "/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm password"
+
+    - name: Link-Rename the Postgres JDBC driver
+      ansible.builtin.file:
+        src: /usr/share/java/postgresql-jdbc.jar
+        path: /usr/share/java/postgresql-connector-java.jar
+        state: link
+        mode: "0644"
+
+    - name: Check license directory
+      ansible.builtin.file:
+        path: "~/.cdp"
+        state: directory
+
+    - name: Copy license files to server
+      ansible.builtin.copy: "src=~/.cloudera/{{ item }} dest=~/.cdp/{{ item }}"
+      with_items:
+        - license.txt
+        - info.txt
+    
+    - name: Start and enable Cloudera SCM  services
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - cloudera-scm-server
+
+    - name: Wait for Cloudera Manager web UI port to be available
+      ansible.builtin.wait_for:
+        port: 7180
+        host: "{{ inventory_hostname }}"
+        delay: 5
+        timeout: 300
+
+    - name: Install CDP license
+      shell: "curl -i -u admin:admin -X POST -H 'Content-Type:multipart/form-data' -F license=@/root/.cdp/license.txt http://$(hostname):7180/api/v43/cm/license"
+
+    - name: "Restart Cloudera Manager"
+      shell: "systemctl restart cloudera-scm-server"
+
+    - name: Wait for Cloudera Manager web UI port to be available
+      ansible.builtin.wait_for:
+        port: 7180
+        host: "{{ inventory_hostname }}"
+        delay: 5
+        timeout: 300
+        

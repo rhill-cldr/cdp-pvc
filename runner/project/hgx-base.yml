@@ -1,0 +1,32 @@
+---
+- name: Cluster Configuration
+  hosts: base
+  remote_user: root
+  pre_tasks:
+    - name: Ensure packages are at the latest version
+      ansible.builtin.dnf: "name={{ item }} state=latest"
+      with_items:
+        - bash
+        - chrony
+        - git
+        - nmap
+        - sshpass
+        - python3.11
+        - python3.11-pip
+        - postgresql
+        - python3.11-psycopg2
+        - postgresql-jdbc
+        - java-11-openjdk-devel
+
+  tasks:
+    - name: Check tmp directory on cluster hosts
+      ansible.builtin.file:
+        path: "/tmp"
+        mode: "1777"
+        state: directory
+
+    - name: "Start and enable services"
+      service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - chronyd
+

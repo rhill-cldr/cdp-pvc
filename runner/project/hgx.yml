@@ -1,0 +1,7 @@
+---
+- name: Install Pre-Reqs
+  ansible.builtin.import_playbook: hgx-pre-reqs.yml
+
+- name: Install Cloudera Manager
+  ansible.builtin.import_playbook: hgx-cm.yml
+
